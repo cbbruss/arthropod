@@ -1,2 +1,3 @@
 VirusShare_*
-*.model
+*.model*
+.DS_Store

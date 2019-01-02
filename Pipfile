@@ -5,9 +5,11 @@ verify_ssl = true
 
 [dev-packages]
 "flake8" = "*"
+"pytest" = "*"
 
 [packages]
 "gensim" = "*"
+arthropod = {editable = true, path = "."}
 
 [requires]
 python_version = "3.7"

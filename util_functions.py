@@ -1,15 +1,17 @@
 """
-	Utils
+    Utils
 """
 import binascii
 
-def get_file_names(zip_file_name):
-    file_names = zip_file_name.namelist()
+def get_file_names(zip_file):
+    file_names = zip_file.namelist()
     return file_names
 
 
-def load_file(zip_file, file_name, pass_string):
-    file = zip_file.open(file_name, pwd=pass_string.encode('utf-8'))
+def load_file(zip_file, file_name, pass_string=None):
+    if pass_string:
+        pass_string.encode('utf-8')
+    file = zip_file.open(file_name, pwd=pass_string)
     content = file.read()
     hex_string = binascii.hexlify(content)
     return hex_string

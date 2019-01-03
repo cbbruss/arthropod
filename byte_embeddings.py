@@ -2,22 +2,36 @@
     Demo code for training embeddings on byte code
 """
 import argparse
-import re
 import time
 import random
-from zipfile import ZipFile
+from typing import List
 from gensim.models import Word2Vec
 
 from util_functions import ZipDataHandler
 
 
-def train_model(b_words, model):
+def train_model(
+        b_words: List[List[str]], 
+        model: Word2Vec=None
+    ) -> Word2Vec:
+    """
+        If a model already exists update it with a new batch of data
+        otherwise train a brand new model
+
+        Args:
+            b_words: list of lists of byte_words
+            model (optional): existing word2vec model
+
+        Returns:
+            model: word2vec model
+
+    """
     if model:
         print("Updating model with {} files".format(len(b_words)))
         model.build_vocab(b_words, update=True)
     else:
         print("Training new model")
-        model = Word2Vec(size=256, window=2, workers=8, sg=1, hs=0, negative=5)
+        model = Word2Vec(size=256, window=2, workers=8, sg=1, hs=0, negative=5, min_count=0)
         model.build_vocab(b_words)
     model.train(b_words, total_examples=len(b_words), epochs=15, compute_loss=True)
     return model

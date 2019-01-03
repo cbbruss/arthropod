@@ -8,7 +8,7 @@ import random
 from zipfile import ZipFile
 from gensim.models import Word2Vec
 
-from util_functions import get_file_names, generate_batch
+from util_functions import ZipDataHandler
 
 
 def train_model(b_words, model):
@@ -33,11 +33,9 @@ if __name__ == '__main__':
     parser.add_argument('--existing_model', default=None, help='number of binaries to add to model at a time')
     args = parser.parse_args()
 
-    zip_file = ZipFile(args.zip_file_name, 'r')
+    zdh = ZipDataHandler(args.zip_file_name, password=args.pass_string)
 
-    fn = get_file_names(zip_file)
-
-    random.shuffle(fn)
+    zdh.shuffle_file_names()
 
     if args.existing_model:
         w2v_model = Word2Vec.load(args.existing_model)
@@ -47,12 +45,12 @@ if __name__ == '__main__':
     train_loss = 0
 
     batch_size = int(args.batch_size)
-    num_files = len(fn)
+    num_files = zdh.num_files
     print("Number of files: ", num_files)
     for idx in range(0, num_files, batch_size):
         st = time.time()
 
-        batch = generate_batch(zip_file, fn, idx, batch_size, args.pass_string)
+        batch = zdh.generate_batch(idx, batch_size)
         w2v_model = train_model(batch, w2v_model)
         print("Loss Change:", w2v_model.get_latest_training_loss() - train_loss)
 

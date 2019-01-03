@@ -13,7 +13,7 @@ class ZipDataHandler():
     def __init__(
         self,
         zip_file_name: str,
-        password: str=None
+        password: str = None
     ):
         """
             Initialize class with zip file name and

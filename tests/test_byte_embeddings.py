@@ -20,6 +20,7 @@ def test_train_new_model():
     w2v_model = train_model(batch, w2v_model)
     assert w2v_model is not None
 
+
 def test_update_model():
     """
         Test whether it can update an existing model

@@ -19,6 +19,9 @@ def test_get_file_names():
 
 
 def test_shuffle_file_names():
+	"""
+		Randomly shuffling file names
+	"""
 	original_zero = ZDH.zip_file_names[0]
 	original_one = ZDH.zip_file_names[1]
 	ZDH.shuffle_file_names()
@@ -26,6 +29,17 @@ def test_shuffle_file_names():
 	new_one = ZDH.zip_file_names[1]
 
 	assert original_zero != new_zero or original_one != new_one
+
+def test_sort_filenames_by_size():
+	"""
+		Test sort files by filesize
+	"""
+	ZDH.sort_files_by_size()
+	fn = ZDH.zip_file_names
+
+	assert fn[0] == 'wxyz'
+	assert fn[3] == 'hijklmnop'
+
 
 def test_load_file():
 	"""

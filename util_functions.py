@@ -1,18 +1,20 @@
 """
     Utils
 """
-from zipfile import ZipFile
-from typing import List
 import binascii
 import random
+from zipfile import ZipFile
+from typing import List
+from operator import itemgetter
+
 
 class ZipDataHandler():
 
     def __init__(
-            self, 
-            zip_file_name: str, 
-            password: str=None
-        ):
+        self,
+        zip_file_name: str,
+        password: str=None
+    ):
         """
             Initialize class with zip file name and
             password if available
@@ -26,6 +28,9 @@ class ZipDataHandler():
             self.password = None
 
     def shuffle_file_names(self):
+        """
+            Shuffles the order of file names
+        """
         random.shuffle(self.zip_file_names)
         print("Shuffled file order")
 
@@ -53,9 +58,22 @@ class ZipDataHandler():
             b_words = self._split_string(b_string)
             batch.append(b_words)
             n_byte_words += len(b_words)
-        average_byte_words =  n_byte_words / float(batch_size)
+        average_byte_words = n_byte_words / float(batch_size)
         print("Average number of byte words:", average_byte_words)
         return batch
+
+    def sort_files_by_size(self):
+        """
+            Sorts all the file names according to the size
+            of the corresponding files
+        """
+        info = self.zip_file.infolist()
+        names = self.zip_file.namelist()
+        file_sizes = [x.file_size for x in info]
+        zip_fn_fs = zip(names, file_sizes)
+        zipped_files = zip(*sorted(zip_fn_fs, key=itemgetter(1)))
+        fn, file_sizes = [list(x) for x in zipped_files]
+        self.zip_file_names = fn
 
     def _load_file(
         self,
@@ -73,7 +91,6 @@ class ZipDataHandler():
         content = file.read()
         hex_string = binascii.hexlify(content)
         return hex_string
-
 
     def _split_string(
         self,
@@ -97,7 +114,6 @@ class ZipDataHandler():
         window = hex_chars * n_bytes
         byte_word_array = []
         for idx in range(0, hex_len, window):
-            byte_word = hex_string[idx: idx+window].decode('utf-8')
+            byte_word = hex_string[idx: idx + window].decode('utf-8')
             byte_word_array.append(byte_word)
         return byte_word_array
-

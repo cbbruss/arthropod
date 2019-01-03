@@ -3,31 +3,44 @@
     once the model has been trained
 """
 import argparse
-import re
 import time
-import random
+from typing import List, Tuple
 import numpy as np
-from operator import itemgetter
-from zipfile import ZipFile
 from gensim.models import Word2Vec
 
-from util_functions import get_file_names, generate_batch
+from util_functions import ZipDataHandler
 
-def sort_files_by_size(zip_file, file_names):
-    file_sizes = [x.file_size for x in zip_file.infolist()]
-    fn, file_sizes = [list(x) for x in zip(*sorted(zip(file_names, file_sizes), key=itemgetter(1)))]
-    return fn
 
-def embed_batch(batch, max_size, embedding_dim, count_half_words):
+def embed_batch(
+        model: Word2Vec,
+        batch: List[List[str]], 
+        max_size: int, 
+        embedding_dim: int, 
+        count_half_words: int
+    ) -> Tuple[np.ndarray, int]:
+    """
+        Given a batch of tokenized binaries return an numpy array
+        of embedded values
+
+        Args:
+            batch: tokenized binaries in hex
+            max_size: maximum len of binaries in batch
+            embedding_dim: dimensions of embedding model
+            count_half_words: running count of words not in model
+
+        Returns:
+            embedded_batch: np array [batch_size, max_size, embedding_dim]
+            count_half_words: running count of words not in model
+    """
     batch_size = len(batch)
-    
+
     embedded_batch = np.zeros(shape=[batch_size, max_size, embedding_dim])
 
     for ba_idx, b in enumerate(batch):
         embedded_b = np.zeros(shape=[max_size, embedding_dim])
         for bdx, bword in enumerate(b):
             try:
-                embedded_b[bdx] = w2v_model.wv[bword]
+                embedded_b[bdx] = model.wv[bword]
             except KeyError:
                 count_half_words += 1
         embedded_batch[ba_idx] = embedded_b
@@ -40,22 +53,17 @@ if __name__ == '__main__':
     parser.add_argument('--pass_string', help='password')
     parser.add_argument('--batch_size', default=4, 
                         help='number of binaries to add to model at a time')
-    parser.add_argument('--existing_model', default=None, 
-                        help='path of existing model')
-    parser.add_argument('--token_size', default=2, 
-                        help='Depends on how model was trained (byte, word, dword)')
+    parser.add_argument('--existing_model', help='path of existing model')
     args = parser.parse_args()
 
-    zip_file = ZipFile(args.zip_file_name, 'r')
+    zdh = ZipDataHandler(args.zip_file_name, password=args.pass_string)
 
-    fn = get_file_names(zip_file)
-
-    fn = sort_files_by_size(zip_file, fn)
+    zdh.sort_files_by_size(zip_file, fn)
 
     w2v_model = Word2Vec.load(args.existing_model)
 
     batch_size = int(args.batch_size)
-    num_files = len(fn)
+    num_files = zdh.num_files
     print("Number of files: ", num_files)
     embedding_dim = len(w2v_model.wv['00e6'])
     print("Embedding dimensions:", embedding_dim)
@@ -64,7 +72,7 @@ if __name__ == '__main__':
     for idx in range(0, num_files, batch_size):
         st = time.time()
 
-        batch = generate_batch(zip_file, fn, idx, batch_size, args.pass_string)
+        batch = zdh.generate_batch(idx, batch_size)
 
         max_size = max([len(x) for x in batch])
 

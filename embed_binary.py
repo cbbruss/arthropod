@@ -67,7 +67,7 @@ if __name__ == '__main__':
     batch_size = int(args.batch_size)
     num_files = zdh.num_files
     print("Number of files: ", num_files)
-    embedding_dim = len(w2v_model.wv['00e6'])
+    embedding_dim = w2v_model.vector_size
     print("Embedding dimensions:", embedding_dim)
 
     count_half_words = 0
@@ -78,7 +78,8 @@ if __name__ == '__main__':
 
         max_size = max([len(x) for x in batch])
 
-        embedded_batch, count_half_words = embed_batch(batch,
+        embedded_batch, count_half_words = embed_batch(w2v_model,
+                                                       batch,
                                                        max_size,
                                                        embedding_dim,
                                                        count_half_words)

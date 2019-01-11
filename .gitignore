@@ -1,3 +1,5 @@
 VirusShare_*
 *.model*
 .DS_Store
+embedded_binaries/*
+Arthropod.egg-info/

@@ -47,6 +47,28 @@ def embed_batch(
     return embedded_batch, count_half_words
 
 
+def average_batch(embedded_batch: np.ndarray) -> np.ndarray:
+    """
+        Given a batch of files that have each byteword embedded
+        in a dense vector, collapse the entire file by
+        averaging over all vectors and also computing the
+        standard deviation of the vectors along each dimension.
+
+        Args:
+            embedded_batch: np array [batch_size, max_size, embedding_dim]
+
+        Returns:
+            batch_params: np array [batch, embedding_dim, 2]
+
+    """
+    batch_average = np.mean(embedded_batch, axis=1)
+    batch_average = np.expand_dims(batch_average, axis=2)
+    batch_std = np.std(embedded_batch, axis=1)
+    batch_std = np.expand_dims(batch_std, axis=2)
+    batch_params = np.concatenate([batch_average, batch_std], axis=2)
+    return batch_params
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Extract zip files')
 
@@ -74,7 +96,7 @@ if __name__ == '__main__':
     for idx in range(0, num_files, batch_size):
         st = time.time()
 
-        batch = zdh.generate_batch(idx, batch_size)
+        batch, batch_fn = zdh.generate_batch(idx, batch_size)
 
         max_size = max([len(x) for x in batch])
 
@@ -87,5 +109,9 @@ if __name__ == '__main__':
         print("Number of incomplete byte words:", count_half_words)
         print("Batch Shape:", embedded_batch.shape)
 
-        np.save('embedded_binaries/batch_{}.npy'.format(idx), embedded_batch)
+        batch_params = average_batch(embedded_batch)
+        np.save('embedded_binaries/batch_p_{}.npy'.format(idx), batch_params)
+        fn_file = "embedded_binaries/batch_p_{}_fns.txt".format(idx)
+        open(fn_file, "w").write('\n'.join(batch_fn))
+
         print('Time to embed:', round(time.time() - st, 3))

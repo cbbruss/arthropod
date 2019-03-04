@@ -13,6 +13,7 @@ arthropod = {editable = true,path = "."}
 jupyter = "*"
 matplotlib = "*"
 pandas = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.7"

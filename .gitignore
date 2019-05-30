@@ -3,3 +3,4 @@ VirusShare_*
 .DS_Store
 embedded_binaries/*
 Arthropod.egg-info/
+*checkpoint.ipynb

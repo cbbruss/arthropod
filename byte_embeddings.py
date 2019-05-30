@@ -69,7 +69,7 @@ if __name__ == '__main__':
     for idx in range(0, num_files, batch_size):
         st = time.time()
 
-        batch = zdh.generate_batch(idx, batch_size)
+        batch, _ = zdh.generate_batch(idx, batch_size)
         w2v_model = train_model(batch, w2v_model)
         change = w2v_model.get_latest_training_loss() - train_loss
         print("Loss Change:", change)

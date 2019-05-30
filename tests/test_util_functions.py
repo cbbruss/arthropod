@@ -66,5 +66,6 @@ def test_generate_batch():
     """
     current_index = 1
     batch_size = 2
-    batch = ZDH.generate_batch(current_index, batch_size)
+    batch, batch_fn = ZDH.generate_batch(current_index, batch_size)
     assert len(batch) == batch_size
+    assert batch_fn == ['qrstuv', 'abcdefg']

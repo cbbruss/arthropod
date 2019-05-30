@@ -53,14 +53,15 @@ class ZipDataHandler():
         print("Loading Batch")
         n_byte_words = 0
         end_idx = cur_idx + batch_size
-        for f in self.zip_file_names[cur_idx:end_idx]:
+        batch_fn = self.zip_file_names[cur_idx:end_idx]
+        for f in batch_fn:
             b_string = self._load_file(f)
             b_words = self._split_string(b_string)
             batch.append(b_words)
             n_byte_words += len(b_words)
         average_byte_words = n_byte_words / float(batch_size)
         print("Average number of byte words:", average_byte_words)
-        return batch
+        return batch, batch_fn
 
     def sort_files_by_size(self):
         """

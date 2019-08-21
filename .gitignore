@@ -5,3 +5,5 @@ embedded_binaries/*
 Arthropod.egg-info/
 *checkpoint.ipynb
 edge_lists/*
+arthropod-*
+graphsage_embeddings/*

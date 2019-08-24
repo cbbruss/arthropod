@@ -1,14 +1,43 @@
 """
 """
+import json
 from typing import List
 
+from src.graph_embeddings import api_config
 
-class EdgeList(object):
+
+class MalwareGraph(object):
 
     def __init__(self, path_to_edge_file, num_nodes=50):
         self.path_to_edge_file = path_to_edge_file
+        self.response = []
+        self.scanned_nodes = []
         self._generate_edge_lists(num_nodes)
 
+    def get_vt_attributes(self, path_to_scans=None):
+        if path_to_scans:
+            with open(path_to_scans) as f:
+                self.responses = json.load(f)
+            self.scanned_nodes = [x['resource'] for x in self.responses]
+        else:
+            path_to_scans = 'VT_Scans.json'
+
+        url = 'https://www.virustotal.com/vtapi/v2/file/report'
+        api_key = api_config.vt_api_key
+
+        for node in self.files:
+            if node not in self.scanned_nodes:
+                params = {'apikey': api_key, 'resource': node}
+                response = requests.get(url, params=params)
+                
+                if response.status_code == 204:
+                    time.sleep(60)
+                    response = requests.get(url, params=params)
+                self.scanned_nodes.append(node)
+                self.responses.append(response.json())
+
+        with open(path_to_scans, 'w', encoding='utf-8') as f:
+            json.dump(self.responses, f, ensure_ascii=False, indent=4)
 
     def _generate_edge_lists(self, num_nodes):
         self.file_dlls = []
@@ -44,5 +73,3 @@ class EdgeList(object):
         self.file_dlls = list(set(self.file_dlls))
         self.func_dlls = list(set(self.func_dlls))
         self.file_funcs = list(set(self.file_funcs))
-
-# class NodeAttributes(object):

@@ -10,7 +10,7 @@ verify_ssl = true
 
 [packages]
 "gensim" = "*"
-arthropod = {editable = true,path = "."}
+arthropod = {editable = true, path = "."}
 jupyter = "*"
 matplotlib = "*"
 pandas = "*"

@@ -10,12 +10,14 @@ verify_ssl = true
 
 [packages]
 "gensim" = "*"
-arthropod = {editable = true, path = "."}
+arthropod = {editable = true,path = "."}
 jupyter = "*"
 matplotlib = "*"
 pandas = "*"
 scikit-learn = "*"
 tornado = "==5.1.1"
+tensorflow = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"

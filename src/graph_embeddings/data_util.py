@@ -1,6 +1,8 @@
 """
 """
 import json
+import requests
+import time
 from typing import List
 
 from src.graph_embeddings import api_config
@@ -29,7 +31,7 @@ class MalwareGraph(object):
             if node not in self.scanned_nodes:
                 params = {'apikey': api_key, 'resource': node}
                 response = requests.get(url, params=params)
-                
+
                 if response.status_code == 204:
                     time.sleep(60)
                     response = requests.get(url, params=params)

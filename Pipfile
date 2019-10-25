@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 "flake8" = "*"
 "pytest" = "*"
+"networkx" = "*"
 
 [packages]
 "gensim" = "*"
@@ -15,6 +16,8 @@ matplotlib = "*"
 pandas = "*"
 scikit-learn = "*"
 tornado = "==5.1.1"
+tensorflow = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"

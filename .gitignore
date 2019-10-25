@@ -4,3 +4,8 @@ VirusShare_*
 embedded_binaries/*
 Arthropod.egg-info/
 *checkpoint.ipynb
+edge_lists/*
+arthropod-*
+graphsage_embeddings/*
+VT_Scans.json
+src/graph_embeddings/api_config.py
